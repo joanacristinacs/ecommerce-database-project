@@ -50,7 +50,7 @@ O modelo otimizado corrige limitações do original através de:
 
 Este script corresponde exatamente ao modelo apresentado pela professora (não modificado).
 
-[Modelo Original (SQL)](sql/modelo_original)
+[Modelo Original (SQL)](sql/scripts_modelo_original)
 
 Inclui:
 
