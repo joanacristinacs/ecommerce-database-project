@@ -1,0 +1,75 @@
+✅ QUERIES PARA O MODELO ANTIGO
+
+(considerando que no modelo antigo não existiam ClientePF/ClientePJ e nem Pagamento separado — apenas CLIENTE, PEDIDO, PRODUTO, ESTOQUE, VENDEDOR, ENTREGA etc.)
+
+1) Qual o nome e o telefone de todos os clientes cadastrados?
+
+(SELECT simples)
+
+SELECT nome, telefone
+FROM Cliente;
+
+2) Quais clientes possuem e-mail do Gmail?
+
+(WHERE com filtro específico)
+
+SELECT id_cliente, nome, email
+FROM Cliente
+WHERE email LIKE '%@gmail.com';
+
+3) Qual o valor total do pedido com adicional de 10% de imposto?
+
+(atributo derivado)
+
+SELECT 
+    id_pedido,
+    valor_total,
+    valor_total * 1.10 AS valor_com_imposto
+FROM Pedido;
+
+4) Quais pedidos foram criados após 2024, ordenados do maior para o menor valor?
+
+(WHERE + ORDER BY)
+
+SELECT id_pedido, data_pedido, valor_total
+FROM Pedido
+WHERE data_pedido >= '2024-01-01'
+ORDER BY valor_total DESC;
+
+5) Quantos pedidos cada vendedor realizou e quais fizeram mais de 10 pedidos?
+
+(GROUP BY + HAVING)
+
+SELECT 
+    Vendedor.id_vendedor,
+    Vendedor.nome,
+    COUNT(Pedido.id_pedido) AS total_pedidos
+FROM Pedido
+JOIN Vendedor ON Pedido.id_vendedor = Vendedor.id_vendedor
+GROUP BY Vendedor.id_vendedor, Vendedor.nome
+HAVING COUNT(Pedido.id_pedido) > 10;
+
+6) Quais produtos estão com quantidade abaixo de 20 unidades no estoque?
+
+(JOIN + filtro)
+
+SELECT 
+    Produto.id_produto,
+    Produto.nome,
+    Estoque.quantidade
+FROM Produto
+JOIN Estoque ON Produto.id_produto = Estoque.id_produto
+WHERE Estoque.quantidade < 20;
+
+7) Listar todos os pedidos com o nome do cliente e o status da entrega
+
+(JOIN múltiplo)
+
+SELECT 
+    Pedido.id_pedido,
+    Cliente.nome AS cliente,
+    Pedido.valor_total,
+    Entrega.status_entrega
+FROM Pedido
+JOIN Cliente ON Pedido.id_cliente = Cliente.id_cliente
+LEFT JOIN Entrega ON Pedido.id_pedido = Entrega.id_pedido;
