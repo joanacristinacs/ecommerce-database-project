@@ -94,19 +94,22 @@ Este é o **script final construído após análise e otimizações**.
 
 ### 🔹 Versão Original (modelo da professora)
 
-> Arquivo: **`/sql/inserts_modelo_antigo.sql`**
+[➡️ inserir_modelo_antigo.sql](sql/inserts_modelo_antigo)
 
 ### 🔹 Versão Otimizada (modelo melhorado)
 
-> Arquivo: **`/sql/inserts_modelo_melhorado.sql`**
+[➡️ inserir_modelo_melhorado.sql](sql/inserts_modelo_melhorado)
 
-Ambas possuem **8–10 registros por tabela**, como solicitado.
 
 ---
 
 # 🔍 5. Consultas SQL
 
-> Arquivo: **`/sql/queries_modelo_melhorado.sql`**
+### 📌 Queries do Modelo Original
+[➡️ queries_modelo_original.sql](sql/queries_modelo_original)
+
+### 📌 Queries do Modelo Melhorado
+[➡️ queries_modelo_melhorado.sql](sql/queries_modelo_melhorado)
 
 Inclui queries com:
 
