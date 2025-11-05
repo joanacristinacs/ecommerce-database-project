@@ -1,0 +1,118 @@
+✅ 1 — INSERTS PARA O BANCO SEM MELHORIAS (MODELO ORIGINAL)
+
+--
+
+✅ Tabela clients
+INSERT INTO clients (Fname, Minit, Lname, CPF, Address) VALUES
+('João','A','Silva','12345678901','Rua A, 123'),
+('Maria','B','Souza','23456789012','Rua B, 456'),
+('Carlos','C','Oliveira','34567890123','Rua C, 789'),
+('Ana','D','Lima','45678901234','Rua D, 101'),
+('Pedro','E','Costa','56789012345','Rua E, 202'),
+('Julia','F','Alves','67890123456','Rua F, 303'),
+('Rafaela','G','Gomes','78901234567','Rua G, 404'),
+('Ricardo','H','Mendes','89012345678','Rua H, 505');
+
+✅ Tabela product
+INSERT INTO product (Pname, classification_kids, category, avaliação, size) VALUES
+('Camiseta', false, 'Vestimenta', 4.2, 'M'),
+('Notebook', false, 'Eletrônico', 4.8, ''),
+('Smartphone', false, 'Eletrônico', 4.6, ''),
+('Boneca', true, 'Brinquedos', 4.1, ''),
+('Sofá', false, 'Móveis', 4.5, '2m'),
+('Chocolate', true, 'Alimentos', 4.0, ''),
+('Mesa', false, 'Móveis', 4.4, '1.5m'),
+('Shorts', false, 'Vestimenta', 4.3, 'G');
+
+✅ Tabela orders
+INSERT INTO orders (idOrderClient, orderStatus, orderDescription, SendValue, paymentCash) VALUES
+(1,'Confirmado','Pedido de roupas',10,false),
+(2,'Em processamento','Pedido eletrônico',15,true),
+(3,'Cancelado','Pedido cancelado',8,false),
+(4,'Confirmado','Mesa de jantar',20,false),
+(5,'Confirmado','Pedido de brinquedos',10,false),
+(6,'Em processamento','Pedido de alimentos',7,true),
+(7,'Confirmado','Pedido de móveis',30,false),
+(8,'Em processamento','Pedido variado',12,false);
+
+✅ Tabela productStorage
+INSERT INTO productStorage (storageLocation, quantity) VALUES
+('Depósito 1', 100),
+('Depósito 2', 80),
+('Depósito 3', 120),
+('Depósito 4', 60),
+('Depósito 5', 30),
+('Depósito 6', 90),
+('Depósito 7', 150),
+('Depósito 8', 50);
+
+✅ Tabela supplier
+INSERT INTO supplier (SocialName, CNPJ, contact) VALUES
+('Fornecedor A','111111111111111','11999999999'),
+('Fornecedor B','222222222222222','11888888888'),
+('Fornecedor C','333333333333333','11777777777'),
+('Fornecedor D','444444444444444','11666666666'),
+('Fornecedor E','555555555555555','11555555555'),
+('Fornecedor F','666666666666666','11444444444'),
+('Fornecedor G','777777777777777','11333333333'),
+('Fornecedor H','888888888888888','11222222222');
+
+✅ Tabela seller
+INSERT INTO seller (SocialName, CNPJ, CPF, location, contact) VALUES
+('Vendedor A','111111111111111',NULL,'São Paulo','11911111111'),
+('Vendedor B','222222222222222',NULL,'Rio de Janeiro','11922222222'),
+('Vendedor C',NULL,'123456789','Bahia','11933333333'),
+('Vendedor D','333333333333333',NULL,'Minas','11944444444'),
+('Vendedor E',NULL,'987654321','Maranhão','11955555555'),
+('Vendedor F','444444444444444',NULL,'Paraná','11966666666'),
+('Vendedor G','555555555555555',NULL,'Ceará','11977777777'),
+('Vendedor H',NULL,'111222333','Amazonas','11988888888');
+
+✅ Tabela productSeller
+INSERT INTO productSeller (idSeller, idProduct, proQuantity) VALUES
+(1,1,10),
+(1,2,5),
+(2,3,8),
+(3,4,12),
+(4,5,3),
+(5,6,20),
+(6,7,4),
+(7,8,9);
+
+✅ Tabela productOrder
+INSERT INTO productOrder (idOProduct, idOorder, poQuantity, poStatus) VALUES
+(1,1,2,'Disponivel'),
+(2,2,1,'Disponivel'),
+(3,3,1,'Sem estoque'),
+(4,4,1,'Disponivel'),
+(5,5,3,'Disponivel'),
+(6,6,2,'Disponivel'),
+(7,7,1,'Sem estoque'),
+(8,8,1,'Disponivel');
+
+✅ Tabela storageLocation
+
+⚠️  modelo contém um erro nessa tabela
+O foreign key referencia orders.idProdtStorage, que não existe.
+Mas vou manter sem melhorias, aqui vai com base no que é possível:
+
+INSERT INTO storageLocation (idLproduct, idLstorage, Location) VALUES
+(1,1,'Setor A'),
+(2,2,'Setor B'),
+(3,3,'Setor C'),
+(4,4,'Setor D'),
+(5,5,'Setor E'),
+(6,6,'Setor F'),
+(7,7,'Setor G'),
+(8,8,'Setor H');
+
+✅ Tabela producSupplier
+INSERT INTO producSupplier (idPsSupplier, idPsProduct, quantity) VALUES
+(1,1,50),
+(2,2,40),
+(3,3,70),
+(4,4,30),
+(5,5,25),
+(6,6,60),
+(7,7,35),
+(8,8,90);
