@@ -1,0 +1,94 @@
+✅ ✅ ✅ QUERIES PARA O MODELO RELACIONAL OTIMIZADO (FINAL)
+
+(CLIENTE / CLIENTEPF / CLIENTEPJ / PAGAMENTO / PEDIDO / ENTREGA / PRODUTO / ESTOQUE / PRODUTO_FORNECEDOR)
+
+1) Buscar todos os clientes PF com nome e CPF
+
+(JOIN + SELECT simples)
+
+SELECT 
+    Cliente.nome,
+    ClientePF.cpf
+FROM Cliente
+JOIN ClientePF ON Cliente.id_cliente = ClientePF.id_cliente;
+
+2) Buscar todos os clientes PJ de um determinado CNPJ
+
+(WHERE)
+
+SELECT 
+    Cliente.nome,
+    ClientePJ.cnpj,
+    ClientePJ.razao_social
+FROM Cliente
+JOIN ClientePJ ON Cliente.id_cliente = ClientePJ.id_cliente
+WHERE ClientePJ.cnpj LIKE '12%';
+
+3) Gerar o limite restante de pagamento de cada cliente (atributo derivado)
+SELECT 
+    Pagamento.id_pagamento,
+    Cliente.nome,
+    Pagamento.limite_disponivel,
+    (Pagamento.limite_disponivel - 200) AS limite_apos_compra
+FROM Pagamento
+JOIN Cliente ON Pagamento.id_cliente = Cliente.id_cliente;
+
+4) Listar todos os pedidos acima de 500 reais, ordenados pelo valor mais alto
+
+(WHERE + ORDER BY)
+
+SELECT id_pedido, valor_total, data_pedido
+FROM Pedido
+WHERE valor_total > 500
+ORDER BY valor_total DESC;
+
+5) Quantos pedidos cada vendedor realizou e mostrar somente quem teve mais de 5 pedidos
+
+(GROUP BY + HAVING)
+
+SELECT 
+    Vendedor.id_vendedor,
+    Vendedor.nome,
+    COUNT(Pedido.id_pedido) AS total_pedidos
+FROM Pedido
+JOIN Vendedor ON Pedido.id_vendedor = Vendedor.id_vendedor
+GROUP BY Vendedor.id_vendedor, Vendedor.nome
+HAVING COUNT(Pedido.id_pedido) > 5;
+
+6) Listar produtos com seu fornecedor e quantidade atual em estoque
+
+(JOIN múltiplo + ORDER BY)
+
+SELECT 
+    Produto.nome AS produto,
+    Fornecedor.nome AS fornecedor,
+    Estoque.quantidade
+FROM Produto
+JOIN Produto_Fornecedor ON Produto.id_produto = Produto_Fornecedor.id_produto
+JOIN Fornecedor ON Produto_Fornecedor.id_fornecedor = Fornecedor.id_fornecedor
+JOIN Estoque ON Produto.id_produto = Estoque.id_produto
+ORDER BY Estoque.quantidade ASC;
+
+7) Obter pedidos, nome do cliente, tipo de pagamento e status da entrega
+
+(JOIN completo entre várias tabelas)
+
+SELECT 
+    Pedido.id_pedido,
+    Cliente.nome AS cliente,
+    Pagamento.tipo_pagamento,
+    Pedido.valor_total,
+    Entrega.status_entrega
+FROM Pedido
+JOIN Cliente ON Pedido.id_cliente = Cliente.id_cliente
+JOIN Pagamento ON Pedido.id_pagamento = Pagamento.id_pagamento
+LEFT JOIN Entrega ON Pedido.id_pedido = Entrega.id_pedido;
+
+8) Quantidade total de produtos fornecidos por cada fornecedor (com HAVING)
+SELECT 
+    Fornecedor.nome,
+    COUNT(Produto_Fornecedor.id_produto) AS total_produtos
+FROM Fornecedor
+JOIN Produto_Fornecedor ON Fornecedor.id_fornecedor = Produto_Fornecedor.id_fornecedor
+GROUP BY Fornecedor.nome
+HAVING total_produtos >= 2;
