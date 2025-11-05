@@ -31,7 +31,7 @@ O modelo original apresenta as entidades básicas necessárias para pedidos, inc
 
 ### ✅ Modelo Otimizado (após melhorias)
 
-> *Insira a imagem aqui:*
+![Modelo Relacional Otimizado](docs/modelo_otimizado.png)
 > **`/docs/modelo_otimizado.png`**
 
 Descrição breve:
