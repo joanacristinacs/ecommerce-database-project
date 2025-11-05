@@ -1,0 +1,115 @@
+✅ — INSERTS PARA O BANCO APÓS MELHORIAS E OTIMIZAÇÕES
+
+Esses inserts seguem o modelo otimizado que criei:
+
+✅ Tabela client
+INSERT INTO client (typeClient, CPF, CNPJ, name, address) VALUES
+('PF','12345678901',NULL,'João Silva','Rua A, 123'),
+('PF','23456789012',NULL,'Maria Souza','Rua B, 456'),
+('PF','34567890123',NULL,'Carlos Oliveira','Rua C, 789'),
+('PJ',NULL,'11111111111111','Empresa XPTO','Rua D, 101'),
+('PJ',NULL,'22222222222222','Comércio Brasil','Rua E, 202'),
+('PF','45678901234',NULL,'Ana Lima','Rua F, 303'),
+('PF','56789012345',NULL,'Pedro Costa','Rua G, 404'),
+('PJ',NULL,'33333333333333','Tech Imports','Rua H, 505');
+
+✅ Tabela payment
+INSERT INTO payment (idClient, typePayment, limitAvailable) VALUES
+(1,'PIX',500),
+(1,'Cartão',2000),
+(2,'PIX',300),
+(2,'Boleto',0),
+(3,'Cartão',1500),
+(4,'Boleto',0),
+(4,'PIX',10000),
+(5,'Cartão',8000),
+(6,'PIX',200),
+(7,'Dois Cartões',3000);
+
+✅ Tabela orders
+INSERT INTO orders (idClient, orderStatus, orderDescription, trackingCode) VALUES
+(1,'Confirmado','Pedido de roupas','BR123'),
+(2,'Enviado','Eletrônicos','BR124'),
+(3,'Entregue','Alimentos','BR125'),
+(4,'Processando','Estoque para empresa','BR126'),
+(5,'Cancelado','Compra inválida','BR127'),
+(6,'Confirmado','Brinquedos','BR128'),
+(7,'Entregue','Móveis','BR129'),
+(8,'Enviado','Reposição','BR130');
+
+✅ Tabela product
+INSERT INTO product (name, category, classification_kids, size, rating) VALUES
+('Camiseta','Vestimenta',false,'M',4.2),
+('Notebook','Eletrônico',false,NULL,4.8),
+('Boneca','Brinquedos',true,NULL,4.3),
+('Sofá','Móveis',false,'2m',4.6),
+('Chocolate','Alimentos',true,NULL,4.1),
+('Smartphone','Eletrônico',false,NULL,4.9),
+('Mesa','Móveis',false,'1.5m',4.5),
+('Shorts','Vestimenta',false,'G',4.3);
+
+✅ Tabela stock
+INSERT INTO stock (location, quantity) VALUES
+('Depósito A',100),
+('Depósito B',80),
+('Depósito C',120),
+('Depósito D',60),
+('Depósito E',30),
+('Depósito F',90),
+('Depósito G',150),
+('Depósito H',50);
+
+✅ Tabela product_stock
+INSERT INTO product_stock (idProduct, idStock, quantity) VALUES
+(1,1,20),
+(2,2,15),
+(3,3,30),
+(4,4,10),
+(5,5,25),
+(6,6,40),
+(7,7,12),
+(8,8,18);
+
+✅ Tabela supplier
+INSERT INTO supplier (socialName, CNPJ, contact) VALUES
+('Fornecedor A','11111111111111','11999999999'),
+('Fornecedor B','22222222222222','11888888888'),
+('Fornecedor C','33333333333333','11777777777'),
+('Fornecedor D','44444444444444','11666666666'),
+('Fornecedor E','55555555555555','11555555555'),
+('Fornecedor F','66666666666666','11444444444'),
+('Fornecedor G','77777777777777','11333333333'),
+('Fornecedor H','88888888888888','11222222222');
+
+✅ Tabela supplier_product
+INSERT INTO supplier_product (idSupplier, idProduct, quantitySupplied) VALUES
+(1,1,50),
+(2,2,40),
+(3,3,60),
+(4,4,35),
+(5,5,20),
+(6,6,80),
+(7,7,33),
+(8,8,90);
+
+✅ Tabela seller
+INSERT INTO seller (socialName, CPF, CNPJ, contact) VALUES
+('Vendas A','12345678901',NULL,'11911111111'),
+('Vendas B',NULL,'11111111111111','11922222222'),
+('Vendas C','22222222222',NULL,'11933333333'),
+('Vendas D',NULL,'22222222222222','11944444444'),
+('Vendas E','33333333333',NULL,'11955555555'),
+('Vendas F',NULL,'33333333333333','11966666666'),
+('Vendas G','44444444444',NULL,'11977777777'),
+('Vendas H',NULL,'44444444444444','11988888888');
+
+✅ Tabela product_seller
+INSERT INTO product_seller (idSeller, idProduct, quantity) VALUES
+(1,1,10),
+(1,2,5),
+(2,3,15),
+(3,4,8),
+(4,5,20),
+(5,6,12),
+(6,7,4),
+(7,8,7);
