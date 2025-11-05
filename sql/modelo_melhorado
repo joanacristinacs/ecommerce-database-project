@@ -1,0 +1,208 @@
+-- ===================================================================
+-- Banco: ecommerce (MySQL) - esquema otimizado
+-- ===================================================================
+CREATE DATABASE IF NOT EXISTS ecommerce CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE ecommerce_plus;
+
+-- -------------------------
+-- Tabela: clients (PF ou PJ)
+-- -------------------------
+CREATE TABLE clients (
+  idClient INT AUTO_INCREMENT PRIMARY KEY,
+  Fname VARCHAR(60),
+  Minit VARCHAR(10),
+  Lname VARCHAR(60),
+  CPF CHAR(11) DEFAULT NULL,
+  CNPJ CHAR(14) DEFAULT NULL,
+  email VARCHAR(255),
+  phone VARCHAR(20),
+  address VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT unique_cpf_client UNIQUE (CPF),
+  CONSTRAINT unique_cnpj_client UNIQUE (CNPJ),
+  CONSTRAINT chk_client_pf_pj CHECK (
+    (CPF IS NOT NULL AND CNPJ IS NULL) OR
+    (CNPJ IS NOT NULL AND CPF IS NULL)
+  )
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: product
+-- -------------------------
+CREATE TABLE product (
+  idProduct INT AUTO_INCREMENT PRIMARY KEY,
+  Pname VARCHAR(100) NOT NULL,
+  classification_kids BOOLEAN NOT NULL DEFAULT FALSE,
+  category ENUM('Eletrônico','Vestimenta','Brinquedos','Alimentos','Móveis') NOT NULL,
+  avaliacao DECIMAL(3,2) DEFAULT 0.00,
+  size VARCHAR(20),
+  price DECIMAL(10,2) DEFAULT 0.00,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: supplier
+-- -------------------------
+CREATE TABLE supplier (
+  idSupplier INT AUTO_INCREMENT PRIMARY KEY,
+  SocialName VARCHAR(255) NOT NULL,
+  CNPJ CHAR(14) NOT NULL,
+  contact_phone VARCHAR(20),
+  contact_email VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT unique_supplier UNIQUE (CNPJ)
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: seller (vendedor)
+-- -------------------------
+CREATE TABLE seller (
+  idSeller INT AUTO_INCREMENT PRIMARY KEY,
+  SocialName VARCHAR(255) NOT NULL,
+  CNPJ CHAR(14) DEFAULT NULL,
+  CPF CHAR(11) DEFAULT NULL,
+  location VARCHAR(255),
+  contact_phone VARCHAR(20),
+  contact_email VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT unique_cnpj_seller UNIQUE (CNPJ),
+  CONSTRAINT unique_cpf_seller UNIQUE (CPF)
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: productStorage (locais de estoque)
+-- -------------------------
+CREATE TABLE productStorage (
+  idProdtStorage INT AUTO_INCREMENT PRIMARY KEY,
+  storageLocation VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: product_storage_location (M:N produto <-> storage)
+-- -------------------------
+CREATE TABLE product_storage_location (
+  idProduct INT NOT NULL,
+  idStorage INT NOT NULL,
+  quantity INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (idProduct, idStorage),
+  CONSTRAINT fk_psl_product FOREIGN KEY (idProduct) REFERENCES product(idProduct) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_psl_storage FOREIGN KEY (idStorage) REFERENCES productStorage(idProdtStorage) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: orders (pedidos)
+-- -------------------------
+CREATE TABLE orders (
+  idOrder INT AUTO_INCREMENT PRIMARY KEY,
+  idOrderClient INT NOT NULL,
+  orderStatus ENUM('Cancelado','Confirmado','Em processamento','Enviado','Entregue') DEFAULT 'Em processamento',
+  orderDescription VARCHAR(255),
+  shippingValue DECIMAL(10,2) DEFAULT 10.00,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_orders_client FOREIGN KEY (idOrderClient) REFERENCES clients(idClient) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Tabela: deliveries (entrega / rastreio)
+-- -------------------------
+CREATE TABLE deliveries (
+  idDelivery INT AUTO_INCREMENT PRIMARY KEY,
+  idOrder INT NOT NULL,
+  carrier VARCHAR(100),
+  tracking_code VARCHAR(100) UNIQUE,
+  delivery_status ENUM('Pendente','Em Transito','Entregue','Devolvido','Cancelado') DEFAULT 'Pendente',
+  estimated_delivery DATE,
+  delivered_at DATETIME,
+  CONSTRAINT fk_deliveries_order FOREIGN KEY (idOrder) REFERENCES orders(idOrder) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Pagamentos (normalizados)
+--  - payment_methods (catálogo)
+--  - client_payment_accounts (formas de pagamento do cliente)
+--  - payments (registros de pagamento)
+-- -------------------------
+CREATE TABLE payment_methods (
+  idPaymentMethod INT AUTO_INCREMENT PRIMARY KEY,
+  method_name VARCHAR(50) NOT NULL,
+  details VARCHAR(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE client_payment_accounts (
+  idClientPaymentAccount INT AUTO_INCREMENT PRIMARY KEY,
+  idClient INT NOT NULL,
+  idPaymentMethod INT NOT NULL,
+  provider VARCHAR(100),
+  token_or_mask VARCHAR(255),
+  limitAvailable DECIMAL(12,2) DEFAULT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_cpa_client FOREIGN KEY (idClient) REFERENCES clients(idClient) ON DELETE CASCADE,
+  CONSTRAINT fk_cpa_method FOREIGN KEY (idPaymentMethod) REFERENCES payment_methods(idPaymentMethod) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+CREATE TABLE payments (
+  idPayment INT AUTO_INCREMENT PRIMARY KEY,
+  idOrder INT NULL,
+  idClient INT NOT NULL,
+  idClientPaymentAccount INT NULL,
+  idPaymentMethod INT NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  status ENUM('Pendente','Aprovado','Recusado','Estornado') DEFAULT 'Pendente',
+  payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pay_order FOREIGN KEY (idOrder) REFERENCES orders(idOrder) ON DELETE SET NULL,
+  CONSTRAINT fk_pay_client FOREIGN KEY (idClient) REFERENCES clients(idClient) ON DELETE CASCADE,
+  CONSTRAINT fk_pay_cpa FOREIGN KEY (idClientPaymentAccount) REFERENCES client_payment_accounts(idClientPaymentAccount) ON DELETE SET NULL,
+  CONSTRAINT fk_pay_method FOREIGN KEY (idPaymentMethod) REFERENCES payment_methods(idPaymentMethod) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Relações produto - vendedor
+-- -------------------------
+CREATE TABLE productSeller (
+  idSeller INT NOT NULL,
+  idProduct INT NOT NULL,
+  proQuantity INT DEFAULT 1,
+  price DECIMAL(12,2) DEFAULT NULL,
+  PRIMARY KEY (idSeller, idProduct),
+  CONSTRAINT fk_product_seller_seller FOREIGN KEY (idSeller) REFERENCES seller(idSeller) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_product_seller_product FOREIGN KEY (idProduct) REFERENCES product(idProduct) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Itens do pedido (produto <-> order)
+-- -------------------------
+CREATE TABLE productOrder (
+  idProduct INT NOT NULL,
+  idOrder INT NOT NULL,
+  poQuantity INT DEFAULT 1,
+  poUnitPrice DECIMAL(12,2) NOT NULL,
+  poStatus ENUM('Disponivel','Sem Estoque','Reservado') DEFAULT 'Disponivel',
+  PRIMARY KEY (idProduct, idOrder),
+  CONSTRAINT fk_po_product FOREIGN KEY (idProduct) REFERENCES product(idProduct) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_po_order FOREIGN KEY (idOrder) REFERENCES orders(idOrder) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- Relação produto <-> supplier
+-- -------------------------
+CREATE TABLE productSupplier (
+  idSupplier INT NOT NULL,
+  idProduct INT NOT NULL,
+  supply_lead_time_days INT DEFAULT NULL,
+  supply_price DECIMAL(12,2) DEFAULT NULL,
+  PRIMARY KEY (idSupplier, idProduct),
+  CONSTRAINT fk_ps_supplier FOREIGN KEY (idSupplier) REFERENCES supplier(idSupplier) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_ps_product FOREIGN KEY (idProduct) REFERENCES product(idProduct) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -------------------------
+-- View de estoque (facilita consultas)
+-- -------------------------
+CREATE VIEW v_product_stock AS
+SELECT p.idProduct, p.Pname, COALESCE(SUM(psl.quantity),0) AS total_stock
+FROM product p
+LEFT JOIN product_storage_location psl ON p.idProduct = psl.idProduct
+GROUP BY p.idProduct, p.Pname;
+
+
