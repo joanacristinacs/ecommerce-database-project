@@ -21,7 +21,7 @@ Aqui você deve inserir as imagens:
 
 ### ✅ Modelo Original (da professora)
 
-> *Insira a imagem aqui:*
+![Modelo Relacional Original](docs/modelo_original.png)
 > **`/docs/modelo_original.png`**
 
 Descrição breve:
